@@ -1,42 +1,32 @@
-name: Deploy Static Website
+name: Deploy Static Site
 
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
     
     steps:
-    # Step 1: Checkout code
     - name: Checkout repository
       uses: actions/checkout@v4
-      
-    # Step 2: List files (for verification)
-    - name: List files
-      run: |
-        ls -la
-        echo "Build directory contents:"
-        find . -name "*.html" -o -name "*.css" -o -name "*.js"
-      
-    # Step 3: Validate HTML (optional)
-    - name: Validate HTML
-      run: |
-        if [ -f "index.html" ]; then
-          echo "HTML file exists"
-          # You can add HTML validation here
-        else
-          echo "No HTML file found"
-          exit 1
-        fi
-        
-    # Step 4: Deploy to GitHub Pages
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./
-        keep_files: false
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0  # Fetch all history
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+      
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: '.'
+        
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
