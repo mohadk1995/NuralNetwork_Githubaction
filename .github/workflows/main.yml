@@ -30,3 +30,9 @@ jobs:
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4
+
+    - name: Notify on failure
+      if: failure()
+      run: |
+        echo "Deployment failed. Please check GitHub Actions logs."
+  
